@@ -1,10 +1,11 @@
-import { defineEventHandler, getCookie } from 'h3'
+import { defineEventHandler } from 'h3';
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
   if (event.path === '/login') {
     return;
   }
-  const isAuthenticated = getCookie(event, 'auth') === 'true';
+  const session = await getUserSession(event);
+  const isAuthenticated = session?.user !== null;
   if (!isAuthenticated) {
     return sendRedirect(event, '/login');
   }

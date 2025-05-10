@@ -1,7 +1,14 @@
 import { defineEventHandler, readBody } from 'h3';
+import { z } from 'zod';
+
+const bodySchema = z.object({
+  username: z.string(),
+  password: z.string(),
+});
 
 export default defineEventHandler(async (event) => {
-  const { username, password } = await readBody(event);
+  const body = await readBody(event);
+  const { username, password } = bodySchema.parse(body);
 
   const authUsername = process.env.AUTH_USERNAME;
   const authPassword = process.env.AUTH_PASSWORD;
@@ -14,14 +21,9 @@ export default defineEventHandler(async (event) => {
   }
 
   if (username === authUsername && password === authPassword) {
-    // Set a session cookie
-    setCookie(event, 'auth', 'true', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 7 // 1 week
+    await setUserSession(event, {
+      user: { id: '1', username: authUsername },
     });
-
     return { success: true };
   }
 
