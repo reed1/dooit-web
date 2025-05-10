@@ -40,39 +40,20 @@
       </div>
     </div>
 
-    <!-- Edit Todo Modal -->
-    <div v-if="showEditModal" class="fixed inset-0 bg-black/20 flex items-center justify-center">
-      <div class="bg-white rounded-lg p-6 w-full max-w-md">
-        <h3 class="text-lg font-semibold mb-4">Edit Todo</h3>
-        <textarea
-          ref="editInputRef"
-          v-model="editDescription"
-          placeholder="Enter todo description"
-          class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 mb-4 min-h-[100px] resize-y"
-          @keyup.enter="handleUpdate"
-        ></textarea>
-        <div class="flex justify-end gap-2">
-          <button
-            @click="closeEditModal"
-            class="px-4 py-2 text-gray-600 hover:text-gray-800"
-          >
-            Cancel
-          </button>
-          <button
-            @click="handleUpdate"
-            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-          >
-            Update
-          </button>
-        </div>
-      </div>
-    </div>
+    <TodoModal
+      v-model="showEditModal"
+      :schema="schema"
+      :is-edit="true"
+      :edit-todo="editTodo"
+      @todo-updated="handleTodoUpdated"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue';
+import { ref } from 'vue';
 import type { Todo } from '@@/types';
+import TodoModal from './TodoModal.vue';
 
 const props = defineProps<{
   todos: Todo[];
@@ -84,54 +65,20 @@ const emit = defineEmits<{
 }>();
 
 const showEditModal = ref(false);
-const editDescription = ref('');
-const editTodoId = ref<number | null>(null);
-const editInputRef = ref<HTMLTextAreaElement | null>(null);
+const editTodo = ref<Todo | undefined>(undefined);
 const selectedTodoId = ref<number | null>(null);
 
-const closeEditModal = () => {
-  showEditModal.value = false;
-  editDescription.value = '';
-  editTodoId.value = null;
-};
-
 const handleEdit = (todo: Todo) => {
-  editTodoId.value = todo.id;
-  editDescription.value = todo.description;
+  editTodo.value = todo;
   showEditModal.value = true;
   selectedTodoId.value = null;
-  nextTick(() => {
-    editInputRef.value?.focus();
-  });
 };
 
-const handleUpdate = async () => {
-  if (!editTodoId.value || !editDescription.value.trim()) return;
-
-  try {
-    const response = await fetch('/api/dooit/updateTodo', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        schema: props.schema,
-        todoId: editTodoId.value,
-        description: editDescription.value,
-      }),
-    });
-
-    if (!response.ok) throw new Error('Failed to update todo');
-
-    const updatedTodo = await response.json();
-    const newTodos = props.todos.map(todo =>
-      todo.id === updatedTodo.id ? updatedTodo : todo
-    );
-    emit('update:todos', newTodos);
-    closeEditModal();
-  } catch (error) {
-    console.error('Error updating todo:', error);
-  }
+const handleTodoUpdated = (updatedTodo: Todo) => {
+  const newTodos = props.todos.map(todo =>
+    todo.id === updatedTodo.id ? updatedTodo : todo
+  );
+  emit('update:todos', newTodos);
 };
 
 const handleDelete = async (todo: Todo) => {

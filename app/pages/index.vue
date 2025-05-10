@@ -17,13 +17,20 @@
                 :schema="selectedSchema"
                 @update:todos="todos = $event" />
 
-      <AddTodoButton v-if="selectedWorkspace"
-                     @click="showAddTodoModal = true" />
-
-      <AddTodoModal v-model="showAddTodoModal"
-                    :schema="selectedSchema"
-                    :workspace-id="selectedWorkspace"
-                    @todo-added="todo => onTodoAdded(todo)" />
+      <button class="fixed bottom-4 right-4 bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:bg-indigo-700"
+              v-if="selectedWorkspace"
+              @click="showAddTodoModal = true">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
+      <TodoModal
+                 v-model="showAddTodoModal"
+                 :schema="selectedSchema"
+                 :workspace-id="selectedWorkspace"
+                 @todo-added="handleTodoAdded" />
     </div>
   </div>
 </template>
@@ -31,6 +38,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { DooitSchema, Workspace, Todo } from '@@/types'
+import TodoModal from '~/components/TodoModal.vue'
 
 const schemas = ref<DooitSchema[]>([])
 const workspaces = ref<Workspace[]>([])
@@ -67,6 +75,10 @@ const handleWorkspaceChange = async () => {
 
 function onTodoAdded(todo: Todo) {
   todos.value.push(todo);
+}
+
+function handleTodoAdded(todo: Todo) {
+  onTodoAdded(todo);
 }
 
 </script>
