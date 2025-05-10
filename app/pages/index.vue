@@ -4,34 +4,29 @@
       <h1 class="text-3xl font-bold text-gray-900 mb-8">Dooit</h1>
 
       <SchemaSelector
-        v-model="selectedSchema"
-        :schemas="schemas"
-        @update:modelValue="handleSchemaChange"
-      />
+                      v-model="selectedSchema"
+                      :schemas="schemas"
+                      @update:modelValue="handleSchemaChange" />
 
       <WorkspaceSelector
-        v-if="selectedSchema"
-        v-model="selectedWorkspace"
-        :workspaces="workspaces"
-        @update:modelValue="handleWorkspaceChange"
-      />
+                         v-if="selectedSchema"
+                         v-model="selectedWorkspace"
+                         :workspaces="workspaces"
+                         @update:modelValue="handleWorkspaceChange" />
 
       <TodoList
-        v-if="selectedWorkspace"
-        :todos="todos"
-      />
+                v-if="selectedWorkspace"
+                :todos="todos" />
 
       <AddTodoButton
-        v-if="selectedWorkspace"
-        @click="showAddTodoModal = true"
-      />
+                     v-if="selectedWorkspace"
+                     @click="showAddTodoModal = true" />
 
       <AddTodoModal
-        v-model="showAddTodoModal"
-        :schema="selectedSchema"
-        :workspace-id="selectedWorkspace"
-        @todo-added="todos.push"
-      />
+                    v-model="showAddTodoModal"
+                    :schema="selectedSchema"
+                    :workspace-id="selectedWorkspace"
+                    @todo-added="todo => onTodoAdded(todo)" />
     </div>
   </div>
 </template>
@@ -47,44 +42,34 @@ const selectedSchema = ref('')
 const selectedWorkspace = ref('')
 const showAddTodoModal = ref(false)
 
-// Fetch schemas on component mount
 onMounted(async () => {
-  try {
-    const response = await fetch('/api/dooit/getSchemas')
-    schemas.value = await response.json()
-  } catch (error) {
-    console.error('Error fetching schemas:', error)
-  }
+  const response = await fetch('/api/dooit/getSchemas')
+  schemas.value = await response.json();
 })
 
-// Handle schema selection
 const handleSchemaChange = async () => {
-  selectedWorkspace.value = ''
-  todos.value = []
-
-  if (!selectedSchema.value) return
-
-  try {
-    const response = await fetch('/api/dooit/getWorkspaces?schema=' + selectedSchema.value)
-    workspaces.value = await response.json()
-  } catch (error) {
-    console.error('Error fetching workspaces:', error)
+  selectedWorkspace.value = '';
+  todos.value = [];
+  if (!selectedSchema.value) {
+    return;
   }
+  const response = await fetch('/api/dooit/getWorkspaces?schema=' + selectedSchema.value)
+  workspaces.value = await response.json();
 }
 
-// Handle workspace selection
 const handleWorkspaceChange = async () => {
-  todos.value = []
-
-  if (!selectedSchema.value || !selectedWorkspace.value) return
-
-  try {
-    const response = await fetch(
-      '/api/dooit/getTodos?schema=' + selectedSchema.value + '&workspaceId=' + selectedWorkspace.value
-    )
-    todos.value = await response.json()
-  } catch (error) {
-    console.error('Error fetching todos:', error)
+  todos.value = [];
+  if (!selectedSchema.value || !selectedWorkspace.value) {
+    return;
   }
+  const response = await fetch(
+    '/api/dooit/getTodos?schema=' + selectedSchema.value + '&workspaceId=' + selectedWorkspace.value
+  );
+  todos.value = await response.json();
 }
+
+function onTodoAdded(todo: Todo) {
+  todos.value.push(todo);
+}
+
 </script>

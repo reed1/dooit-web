@@ -1,5 +1,5 @@
 <template>
-  <div v-if="modelValue" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div v-if="modelValue" class="fixed inset-0 bg-black/20 flex items-center justify-center">
     <div class="bg-white rounded-lg p-6 w-full max-w-md">
       <h3 class="text-lg font-semibold mb-4">Add New Todo</h3>
       <input
@@ -7,10 +7,11 @@
         type="text"
         placeholder="Enter todo description"
         class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 mb-4"
+        @keyup.enter="handleAdd"
       />
       <div class="flex justify-end gap-2">
         <button
-          @click="$emit('update:modelValue', false)"
+          @click="closeModal"
           class="px-4 py-2 text-gray-600 hover:text-gray-800"
         >
           Cancel
@@ -28,6 +29,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import type { Todo } from '@@/types';
 
 const props = defineProps<{
   modelValue: boolean;
@@ -37,10 +39,15 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
-  (e: 'todo-added', todo: any): void;
+  (e: 'todo-added', todo: Todo): void;
 }>();
 
 const description = ref('');
+
+const closeModal = () => {
+  emit('update:modelValue', false);
+  description.value = '';
+};
 
 watch(() => props.modelValue, (newValue) => {
   if (!newValue) {
@@ -68,8 +75,7 @@ const handleAdd = async () => {
 
     const newTodo = await response.json();
     emit('todo-added', newTodo);
-    emit('update:modelValue', false);
-    description.value = '';
+    closeModal();
   } catch (error) {
     console.error('Error adding todo:', error);
   }
