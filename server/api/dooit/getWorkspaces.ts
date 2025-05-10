@@ -1,7 +1,12 @@
 import { rawQuery } from '@@/server/utils/db';
+import { z } from 'zod';
+
+const querySchema = z.object({
+  schema: z.string(),
+});
 
 export default defineEventHandler(async (event) => {
-  const { schema } = getQuery(event);
+  const { schema } = querySchema.parse(getQuery(event));
   if (!schema) {
     throw createError({
       statusCode: 400,

@@ -8,7 +8,7 @@ const db = pgPromise()({
   port: parseInt(process.env.DB_PORT || '5432'),
 });
 
-export async function rawQuery(text: string, params?: any[]) {
+export async function rawQuery(text: string, params?: any[]): Promise<any[]> {
   try {
     const res = await db.query(text, params);
     return res;

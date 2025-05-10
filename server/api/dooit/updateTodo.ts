@@ -1,16 +1,16 @@
 import { rawQuery } from '@@/server/utils/db';
 import { Todo } from '@@/types';
+import { z } from 'zod';
+
+const bodySchema = z.object({
+  schema: z.string(),
+  todoId: z.number(),
+  description: z.string(),
+});
 
 export default defineEventHandler(async (event): Promise<Todo> => {
   const body = await readBody(event);
-  const { schema, todoId, description } = body;
-
-  if (!schema || !todoId || !description) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: 'schema, todoId, and description are required',
-    });
-  }
+  const { schema, todoId, description } = bodySchema.parse(body);
 
   const result = await rawQuery(
     `UPDATE ${schema}.todo
