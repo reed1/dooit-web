@@ -3,30 +3,24 @@
     <div class="max-w-4xl mx-auto">
       <h1 class="text-3xl font-bold text-gray-900 mb-8">Dooit</h1>
 
-      <SchemaSelector
-                      v-model="selectedSchema"
+      <SchemaSelector v-model="selectedSchema"
                       :schemas="schemas"
                       @update:modelValue="handleSchemaChange" />
 
-      <WorkspaceSelector
-                         v-if="selectedSchema"
+      <WorkspaceSelector v-if="selectedSchema"
                          v-model="selectedWorkspace"
                          :workspaces="workspaces"
                          @update:modelValue="handleWorkspaceChange" />
 
-      <TodoList
-        v-if="selectedWorkspace"
-        :todos="todos"
-        :schema="selectedSchema"
-        @update:todos="todos = $event"
-      />
+      <TodoList v-if="selectedWorkspace"
+                :todos="todos"
+                :schema="selectedSchema"
+                @update:todos="todos = $event" />
 
-      <AddTodoButton
-                     v-if="selectedWorkspace"
+      <AddTodoButton v-if="selectedWorkspace"
                      @click="showAddTodoModal = true" />
 
-      <AddTodoModal
-                    v-model="showAddTodoModal"
+      <AddTodoModal v-model="showAddTodoModal"
                     :schema="selectedSchema"
                     :workspace-id="selectedWorkspace"
                     @todo-added="todo => onTodoAdded(todo)" />
