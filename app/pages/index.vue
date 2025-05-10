@@ -3,52 +3,35 @@
     <div class="max-w-4xl mx-auto">
       <h1 class="text-3xl font-bold text-gray-900 mb-8">Dooit</h1>
 
-      <!-- Schema Selection -->
-      <div class="mb-8">
-        <select
-          v-model="selectedSchema"
-          class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
-          @change="handleSchemaChange"
-        >
-          <option value="">Select a schema</option>
-          <option v-for="schema in schemas" :key="schema.name" :value="schema.name">
-            {{ schema.label }}
-          </option>
-        </select>
-      </div>
+      <SchemaSelector
+        v-model="selectedSchema"
+        :schemas="schemas"
+        @update:modelValue="handleSchemaChange"
+      />
 
-      <!-- Workspace Selection -->
-      <div v-if="selectedSchema" class="mb-8">
-        <select
-          v-model="selectedWorkspace"
-          class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
-          @change="handleWorkspaceChange"
-        >
-          <option value="">Select a workspace</option>
-          <option v-for="workspace in workspaces" :key="workspace.id" :value="workspace.id">
-            {{ workspace.description }}
-          </option>
-        </select>
-      </div>
+      <WorkspaceSelector
+        v-if="selectedSchema"
+        v-model="selectedWorkspace"
+        :workspaces="workspaces"
+        @update:modelValue="handleWorkspaceChange"
+      />
 
-      <!-- Todo List -->
-      <div v-if="selectedWorkspace" class="space-y-4">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Todos</h2>
-        <div v-if="todos.length === 0" class="text-gray-500 text-center py-4">
-          No todos found in this workspace
-        </div>
-        <div v-else class="bg-white shadow rounded-lg divide-y divide-gray-200">
-          <div
-            v-for="todo in todos"
-            :key="todo.id"
-            class="p-4 hover:bg-gray-50"
-          >
-            <div class="flex items-center">
-              <span class="text-gray-900">{{ todo.description }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <TodoList
+        v-if="selectedWorkspace"
+        :todos="todos"
+      />
+
+      <AddTodoButton
+        v-if="selectedWorkspace"
+        @click="showAddTodoModal = true"
+      />
+
+      <AddTodoModal
+        v-model="showAddTodoModal"
+        :schema="selectedSchema"
+        :workspace-id="selectedWorkspace"
+        @todo-added="todos.push"
+      />
     </div>
   </div>
 </template>
@@ -62,6 +45,7 @@ const workspaces = ref<Workspace[]>([])
 const todos = ref<Todo[]>([])
 const selectedSchema = ref('')
 const selectedWorkspace = ref('')
+const showAddTodoModal = ref(false)
 
 // Fetch schemas on component mount
 onMounted(async () => {
