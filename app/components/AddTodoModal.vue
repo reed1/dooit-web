@@ -2,13 +2,13 @@
   <div v-if="modelValue" class="fixed inset-0 bg-black/20 flex items-center justify-center">
     <div class="bg-white rounded-lg p-6 w-full max-w-md">
       <h3 class="text-lg font-semibold mb-4">Add New Todo</h3>
-      <input
+      <textarea
+        ref="inputRef"
         v-model="description"
-        type="text"
         placeholder="Enter todo description"
-        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 mb-4"
+        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 mb-4 min-h-[100px] resize-y"
         @keyup.enter="handleAdd"
-      />
+      ></textarea>
       <div class="flex justify-end gap-2">
         <button
           @click="closeModal"
@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 import type { Todo } from '@@/types';
 
 const props = defineProps<{
@@ -43,6 +43,7 @@ const emit = defineEmits<{
 }>();
 
 const description = ref('');
+const inputRef = ref<HTMLTextAreaElement | null>(null);
 
 const closeModal = () => {
   emit('update:modelValue', false);
@@ -52,6 +53,10 @@ const closeModal = () => {
 watch(() => props.modelValue, (newValue) => {
   if (!newValue) {
     description.value = '';
+  } else {
+    nextTick(() => {
+      inputRef.value?.focus();
+    });
   }
 });
 

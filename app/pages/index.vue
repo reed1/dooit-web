@@ -15,8 +15,11 @@
                          @update:modelValue="handleWorkspaceChange" />
 
       <TodoList
-                v-if="selectedWorkspace"
-                :todos="todos" />
+        v-if="selectedWorkspace"
+        :todos="todos"
+        :schema="selectedSchema"
+        @update:todos="todos = $event"
+      />
 
       <AddTodoButton
                      v-if="selectedWorkspace"

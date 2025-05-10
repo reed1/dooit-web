@@ -2,11 +2,16 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
+  vite: {
+    server: {
+      allowedHosts: true,
+    },
+  },
+
   modules: [
-    '@nuxt/ui',
     '@nuxt/eslint',
-    '@nuxt/icon',
     '@nuxt/fonts',
+    '@nuxt/ui',
     '@nuxt/test-utils'
   ],
 
