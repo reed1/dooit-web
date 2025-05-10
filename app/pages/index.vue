@@ -26,8 +26,7 @@
                 d="M12 4v16m8-8H4" />
         </svg>
       </button>
-      <TodoModal
-                 v-model="showAddTodoModal"
+      <TodoModal v-model="showAddTodoModal"
                  :schema="selectedSchema"
                  :workspace-id="selectedWorkspace"
                  @todo-added="handleTodoAdded" />
@@ -36,21 +35,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { DooitSchema, Workspace, Todo } from '@@/types'
-import TodoModal from '~/components/TodoModal.vue'
+import { ref, onMounted } from 'vue';
+import type { DooitSchema, Workspace, Todo } from '@@/types';
+import TodoModal from '~/components/TodoModal.vue';
 
-const schemas = ref<DooitSchema[]>([])
-const workspaces = ref<Workspace[]>([])
-const todos = ref<Todo[]>([])
-const selectedSchema = ref('')
-const selectedWorkspace = ref('')
-const showAddTodoModal = ref(false)
+const schemas = ref<DooitSchema[]>([]);
+const workspaces = ref<Workspace[]>([]);
+const todos = ref<Todo[]>([]);
+const selectedSchema = ref('');
+const selectedWorkspace = ref('');
+const showAddTodoModal = ref(false);
 
 onMounted(async () => {
-  const response = await fetch('/api/dooit/getSchemas')
+  const response = await fetch('/api/dooit/getSchemas');
   schemas.value = await response.json();
-})
+});
 
 const handleSchemaChange = async () => {
   selectedWorkspace.value = '';
