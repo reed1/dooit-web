@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
 
   if (username === authUsername && password === authPassword) {
     await setUserSession(event, {
-      user: { id: '1', username: authUsername },
+      secure: { username: authUsername },
     });
     return { success: true };
   }
