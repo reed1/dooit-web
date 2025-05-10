@@ -46,6 +46,10 @@ const username = ref('');
 const password = ref('');
 const router = useRouter();
 
+useHead({
+  title: 'Login',
+});
+
 const handleLogin = async () => {
   const response = await fetch('/api/auth/login', {
     method: 'POST',

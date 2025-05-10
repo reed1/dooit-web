@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     return;
   }
   const session = await getUserSession(event);
-  const isAuthenticated = session?.user !== null;
+  const isAuthenticated = Boolean(session?.user);
   if (!isAuthenticated) {
     return sendRedirect(event, '/login');
   }

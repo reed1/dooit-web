@@ -39,6 +39,10 @@ import { ref, onMounted } from 'vue';
 import type { DooitSchema, Workspace, Todo } from '@@/types';
 import TodoModal from '~/components/TodoModal.vue';
 
+useHead({
+  title: 'Dooit',
+});
+
 const schemas = ref<DooitSchema[]>([]);
 const workspaces = ref<Workspace[]>([]);
 const todos = ref<Todo[]>([]);
