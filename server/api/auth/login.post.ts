@@ -9,11 +9,6 @@ const bodySchema = z.object({
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { username, password } = bodySchema.parse(body);
-  console.log({
-    from: 'login.post',
-    username,
-    password,
-  });
 
   const authUsername = process.env.AUTH_USERNAME;
   const authPassword = process.env.AUTH_PASSWORD;

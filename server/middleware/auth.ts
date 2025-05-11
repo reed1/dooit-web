@@ -8,7 +8,6 @@ export default defineEventHandler(async (event) => {
     return;
   }
   const session = await getUserSession(event);
-  console.log('session', session);
   if (session?.user) {
     return;
   }

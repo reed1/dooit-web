@@ -18,6 +18,16 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  runtimeConfig: {
+    session: {
+      cookie: {
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production' ? true : false,
+      },
+      password: process.env.NUXT_SESSION_PASSWORD!,
+    },
+  },
+
   future: {
     compatibilityVersion: 4
   },
