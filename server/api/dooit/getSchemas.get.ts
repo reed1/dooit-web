@@ -8,6 +8,11 @@ function getSchemaLabel(schema: string) {
 }
 
 export default defineEventHandler(async (event): Promise<DooitSchema[]> => {
+  // const session = await getUserSession(event);
+  const { user } = await requireUserSession(event);
+  console.log('user', user);
+
+  // console.log('s2ession', session);
   const rows = await rawQuery(`
     SELECT * FROM information_schema.schemata
     where schema_name like 't_%'

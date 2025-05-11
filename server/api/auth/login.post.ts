@@ -9,6 +9,11 @@ const bodySchema = z.object({
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { username, password } = bodySchema.parse(body);
+  console.log({
+    from: 'login.post',
+    username,
+    password,
+  });
 
   const authUsername = process.env.AUTH_USERNAME;
   const authPassword = process.env.AUTH_PASSWORD;
@@ -22,7 +27,7 @@ export default defineEventHandler(async (event) => {
 
   if (username === authUsername && password === authPassword) {
     await setUserSession(event, {
-      secure: { username: authUsername },
+      user: { username: authUsername },
     });
     return { success: true };
   }

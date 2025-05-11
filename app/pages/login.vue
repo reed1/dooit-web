@@ -42,27 +42,20 @@
 </template>
 
 <script setup lang="ts">
+const { fetch: refreshSession } = useUserSession();
 const username = ref('');
 const password = ref('');
-const router = useRouter();
 
 useHead({
   title: 'Login',
 });
 
 const handleLogin = async () => {
-  const response = await fetch('/api/auth/login', {
+  await $fetch('/api/auth/login', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ username: username.value, password: password.value }),
-  })
-
-  if (response.ok) {
-    router.push('/')
-  } else {
-    alert('Invalid credentials');
-  }
+    body: { username: username.value, password: password.value }
+  });
+  await refreshSession();
+  await navigateTo('/');
 }
 </script>
