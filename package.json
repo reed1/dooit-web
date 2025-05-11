@@ -8,6 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "serve:prod": "dotenv -e .env -- node .output/server/index.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint --fix ."
   },
@@ -17,6 +18,7 @@
     "@nuxt/fonts": "0.11.3",
     "@nuxt/test-utils": "3.18.0",
     "@nuxt/ui": "^3.1.1",
+    "dotenv-cli": "^8.0.0",
     "nuxt": "^3.17.2",
     "nuxt-auth-utils": "0.5.20",
     "pg-promise": "^11.13.0",
