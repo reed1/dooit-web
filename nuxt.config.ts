@@ -20,10 +20,10 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     session: {
+      maxAge: 30 * 24 * 60 * 60, // 30 days
       cookie: {
         sameSite: 'strict',
         secure: process.env.NODE_ENV === 'production' ? true : false,
-        maxAge: 30 * 24 * 60 * 60, // 30 days
       },
       password: process.env.NUXT_SESSION_PASSWORD!,
     },
